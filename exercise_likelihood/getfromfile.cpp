@@ -1,4 +1,4 @@
-//Questo serve per poter acquisire i file
+//Questo serve per poter acquisire i file e fa un istogramma
 using namespace std;
 void ex_like_1(string filename)
 {
