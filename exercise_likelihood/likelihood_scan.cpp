@@ -1,22 +1,33 @@
 using namespace std;
 #include <vector>
 
-//----Funzioni----//
-
-/*float ext_likelihood( int s , int b , vector<float> x , float theta[4] )
+Double_t ext_likelihood(int s, int b, vector<Double_t> x, Double_t theta[4])
 {
-    TF1 * ps = new TF1("ps" , "gaus" , 0 , 1000 );
-    TF1 * pb = new TF1("pb" , "1/([3]) * exp( -x*[3] )" , 0 , 1000 );
-    TF1 * poisson = new TF1("poisson" , "exp(-(s+b))/()" , 0 , 1000 );
-    float a=0;
-    return a;
-}*/
+    int N = x.size();
+    Double_t y = 0;
 
-vector<float> getfromfile(string filename)
+    TF1 *ps = new TF1("ps", "gaus", 0, 1000);
+    TF1 *pb = new TF1("pb", "1/([0]) * exp( -x*[0] )", 0, 1000);
+    //TF1 *poisson = new TF1("poisson", "exp(-(s+b))/(TMath::Factorial(N))", 0, 1000);
+    ps->SetParameters(theta[0], theta[1], theta[2]);
+    pb->SetParameter(0, theta[3]);
+
+    TF1 *likelihood = new TF1("likelihood", "-2*log([0] * pb + [1] * ps)", 0, 1000);
+    likelihood->SetParameters(b, s);
+    Double_t sum = 0;
+    for (int i = 0; i < N; i++)
+    {
+        sum += likelihood->Eval(x.at(i));
+    }
+    y = sum + log(exp(-(N)) / (TMath::Factorial(N)));
+    return y;
+}
+
+vector<Double_t> fromfile(string filename)
 {
     ifstream f(filename + ".txt");
-    vector<float> data;
-    float xs;
+    vector<Double_t> data;
+    Double_t xs;
 
     while (!f.eof())
     {
@@ -28,5 +39,16 @@ vector<float> getfromfile(string filename)
 
 void likelihood_scan()
 {
- //   vector<float> x_1 = getfromfile(("exercise_Likelihood_" + to_string(1)).c_str());
+    Double_t y;
+    Double_t theta[4];
+        theta[1] = 400;
+        theta[0] = 1 / (sqrt(2 * TMath::Pi() * theta[1] * theta[1]));
+        theta[2] = 70;
+        theta[3] = 200;
+
+    vector<Double_t> x_1 = fromfile(("exercise_Likelihood_" + to_string(1)).c_str());
+    int s = (x_1.size()) / 2;
+    int b = (x_1.size()) / 2;
+    y = ext_likelihood(s, b, x_1, theta);
+    cout << y << endl;
 }
