@@ -7,7 +7,7 @@ Double_t ext_likelihood(int s, int b, vector<Double_t> x, Double_t theta[4])
     Double_t y = 0;
 
     TF1 *ps = new TF1("ps", "gaus", 0, 1000);
-    TF1 *pb = new TF1("pb", "1/([0]) * exp( -x*[0] )", 0, 1000);
+    TF1 *pb = new TF1("pb", "[0] * exp( -x/[0] )", 0, 1000);
     //TF1 *poisson = new TF1("poisson", "exp(-(s+b))/(TMath::Factorial(N))", 0, 1000);
     ps->SetParameters(theta[0], theta[1], theta[2]);
     pb->SetParameter(0, theta[3]);
