@@ -1,6 +1,9 @@
 using namespace std;
 #include <vector>
 
+using namespace std;
+#include <vector>
+
 Double_t ext_likelihood(int s, int b, vector<Double_t> x, Double_t theta[4])
 {
     int N = x.size();
@@ -42,20 +45,45 @@ vector<Double_t> fromfile(string filename)
     return data;
 }
 
+
 void likelihood_scan()
 {
-    Double_t y;
+    vector<Double_t> x_1 = fromfile(("exercise_Likelihood_" + to_string(1)).c_str());
+    int N = x_1.size();
+    Double_t yi, y[N], tot_s[N];
     Double_t theta[4];
+    TCanvas *c = new TCanvas();
+
     theta[1] = 400;
     theta[0] = 1 / (sqrt(2 * TMath::Pi() * theta[1] * theta[1]));
     theta[2] = 70;
     theta[3] = 200;
 
-    vector<Double_t> x_1 = fromfile(("exercise_Likelihood_" + to_string(1)).c_str());
+    for (int i = 10; i < N; i++)
+    {
+        int s = i;
+        int b = N - i;
+        yi = ext_likelihood(s, b, x_1, theta);
+        y[i] = yi;
+        tot_s[i] = s;
 
+        cout<<"Y= "; cout<<y[i] ;
+        cout<<" -- "; cout<<tot_s[i]<<endl;
+            }
+
+    TGraph *g1 = new TGraph(N, tot_s, y);
+        g1->SetTitle("Likelihood al variare di S");
+        g1->GetXaxis()->SetTitle("S");
+        g1->GetYaxis()->SetTitle("Likelihood");
+        g1->SetMarkerStyle(22);
+        g1->SetMarkerColor(4);
+        g1->Draw("AP");
+
+    /*
+    This was the first test, made for try functions
     int s = (x_1.size()) / 2;
     int b = (x_1.size()) / 2;
 
     y = ext_likelihood(s, b, x_1, theta);
-    cout << y << endl;
+    cout << y << endl;*/
 }
